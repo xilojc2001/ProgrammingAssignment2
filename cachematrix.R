@@ -18,12 +18,32 @@
 ##   - set the value of the inverse matrix
 ##   - get the value of the inverse matrix
 
-makeCacheMatrix <- function(x = matrix()) {
-
+makeCacheMatrix <- function(objMatrix = matrix()) {
+        result <- NULL
+        set <- function(newMatrix) {
+                objMatrix <<- newMatrix
+                result <<- NULL
+        }
+        get <- function() objMatrix
+        setinverse <- function(inv) result <<- inv
+        getinverse <- function() result
+        list(
+                set = set,
+                get = get,
+                setinverse = setinverse,
+                getinverse = getinverse
+        )
 }
 
-
 ## The following function calculates the inverse of a "special" matrix created with makeCacheMatrix
-cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+cacheSolve <- function(objMatrix, ...) {
+        result <- objMatrix$getinverse()
+        if(!is.null(result)) {
+                message("Getting cached data!")
+                return(result)
+        }
+        newMatrix <- objMatrix$get()
+        result <- solve(newMatrix, ...)
+        objMatrix$setinverse(result)
+        result
 }
